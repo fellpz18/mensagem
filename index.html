@@ -10,60 +10,156 @@
             padding: 0;
             background-color: #000;
             overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
+            z-index: 10;
         }
-        
-        .message {
-            color: #fff;
-            font-size: 3em;
+
+        .message-card {
             text-align: center;
-            text-shadow: 0 0 10px #fff, 0 0 20px #ff0, 0 0 30px #f0f;
-            z-index: 100;
-            animation: pulse 1.5s infinite alternate;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            margin: 20px;
         }
-        
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+
+        .congrats-title {
+            color: #FFD700;
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            margin-bottom: 30px;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
-        
+
+        .prize-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .prize-message {
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .qr-container {
+            background: linear-gradient(135deg, #FFFFFF, #F5F5F5);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-container:hover {
+            transform: scale(1.03);
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 15px;
+        }
+
+        .qr-label {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: bold;
+            max-width: 180px;
+            text-align: center;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
         canvas {
             position: fixed;
             top: 0;
             left: 0;
             z-index: 1;
         }
+
+        @media (max-width: 768px) {
+            .message-card {
+                padding: 25px;
+                max-width: 90%;
+            }
+            
+            .congrats-title {
+                font-size: 2.5rem;
+            }
+            
+            .prize-message {
+                font-size: 1.4rem;
+            }
+            
+            .qr-code {
+                width: 150px;
+                height: 150px;
+            }
+        }
     </style>
 </head>
 <body>
     <canvas id="fireworks"></canvas>
-    <div class="message">Parabéns, você ganhou!</div>
+    
+    <div class="container">
+        <div class="message-card">
+            <h1 class="congrats-title">PARABÉNS!</h1>
+            
+            <div class="prize-section">
+                <p class="prize-message">
+                    Entre em contato através do<br>
+                    QR Code abaixo para receber<br>
+                    seu prêmio!
+                </p>
+                
+                <div class="qr-container">
+                    <img class="qr-code" src="/qrcode/Captura de tela 2025-05-28 133432.png" alt="QR Code para contato">
+                    <span class="qr-label">ESCANEIE PARA RESGATAR</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Configuração dos fogos de artifício
+        // Configuração dos fogos de artifício (o mesmo script anterior)
         const canvas = document.getElementById('fireworks');
         const ctx = canvas.getContext('2d');
-        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
-        // Ajusta o canvas quando a janela é redimensionada
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
         
-        // Cores dos fogos
         const colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ffffff'];
-        
-        // Partículas
         let particles = [];
         
-        // Classe de partícula
         class Particle {
             constructor(x, y, color) {
                 this.x = x;
@@ -77,7 +173,7 @@
             }
             
             update() {
-                this.speedY += 0.05; // Gravidade
+                this.speedY += 0.05;
                 this.x += this.speedX;
                 this.y += this.speedY;
                 this.alpha -= this.decay;
@@ -95,7 +191,6 @@
             }
         }
         
-        // Cria um fogo de artifício
         function createFirework(x, y) {
             const particleCount = 100;
             const color = colors[Math.floor(Math.random() * colors.length)];
@@ -105,18 +200,14 @@
             }
         }
         
-        // Animação
         function animate() {
-            // Limpa o canvas com um preto semi-transparente para criar rastro
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Atualiza e desenha as partículas
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
                 
-                // Remove partículas que já desapareceram
                 if (particles[i].alpha <= 0) {
                     particles.splice(i, 1);
                     i--;
@@ -126,17 +217,14 @@
             requestAnimationFrame(animate);
         }
         
-        // Inicia a animação
         animate();
         
-        // Dispara fogos aleatoriamente
         setInterval(() => {
             const x = Math.random() * canvas.width;
             const y = Math.random() * canvas.height / 2;
             createFirework(x, y);
         }, 800);
         
-        // Dispara fogos ao clicar
         canvas.addEventListener('click', (e) => {
             createFirework(e.clientX, e.clientY);
         });
