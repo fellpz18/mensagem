@@ -68,17 +68,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .qr-container:hover {
             transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .qr-code {
             width: 180px;
             height: 180px;
             margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .qr-container:hover .qr-code {
+            transform: scale(0.95);
         }
 
         .qr-label {
@@ -87,6 +95,40 @@
             font-weight: bold;
             max-width: 180px;
             text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .qr-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+
+        .qr-container:hover .click-hint {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
         }
 
         @keyframes float {
@@ -138,15 +180,17 @@
                 </p>
                 
                 <div class="qr-container">
-                    <img class="qr-code" src="qrcode/Captura de tela 2025-05-28 133432.png" alt="QR Code para contato">
-                    <span class="qr-label">ESCANEIE PARA RESGATAR</span>
+                    <img class="qr-code" src="/qrcode/Captura de tela 2025-05-28 133432.png" alt="QR Code para contato">
+                    <span class="qr-label">ESCANEIE OU CLIQUE PARA RESGATAR</span>
+                    <div class="click-hint">Clique para acessar</div>
+                    <a href="https://wa.me/75988933384" class="qr-button" target="_blank" title="Resgatar prêmio"></a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuração dos fogos de artifício (o mesmo script anterior)
+        // Configuração dos fogos de artifício
         const canvas = document.getElementById('fireworks');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -227,6 +271,22 @@
         
         canvas.addEventListener('click', (e) => {
             createFirework(e.clientX, e.clientY);
+        });
+
+        // Adiciona confetes ao clicar no QR Code
+        document.querySelector('.qr-button').addEventListener('click', function(e) {
+            // Impede que o clique se propague para o canvas
+            e.stopPropagation();
+            
+            // Cria fogos extras para comemorar
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height / 2
+                    );
+                }, i * 200);
+            }
         });
     </script>
 </body>
